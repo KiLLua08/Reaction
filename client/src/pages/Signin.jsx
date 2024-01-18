@@ -2,7 +2,7 @@ import React from 'react'
 
 function Signin() {
   return (
-    <div className='border'>
+    <div className=''>
       SI
     </div>
   )
