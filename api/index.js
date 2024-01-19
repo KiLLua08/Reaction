@@ -21,3 +21,14 @@ app.use(express.json())
 app.use('/api/user', UserRoutes)
 
 app.use('/api/auth', AuthRoutes)
+
+
+app.use((err, req, res, next) => {
+    const errstatus = err.statusCode || 500;
+    const message = err.message || 'Internal Server Error';
+    res.status(errstatus).json({
+        success : false,
+        errstatus,
+        message
+    })
+})
