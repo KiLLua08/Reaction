@@ -3,11 +3,16 @@ import mongoose from "mongoose";
 import dotenv from 'dotenv'
 import UserRoutes from "./routes/user.route.js";
 import AuthRoutes from './routes/auth.route.js';
+import cors from 'cors'
 
 dotenv.config()
 
+
 const app = express()
 const port = 4004
+
+app.use(cors())
+
 //leagueoflegends123 rayen08yako
 app.listen(port , ()=> {
     console.log('listenning to port : 4004');

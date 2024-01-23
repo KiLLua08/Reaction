@@ -2,11 +2,40 @@ import React, { useState } from 'react'
 import killua from '../assets/killua.png'
 import straw from '../assets/straw.png'
 import luffy from '../assets/luffy.png'
-import {Link, } from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import { Button, TextInput, Spinner, Label, Alert} from 'flowbite-react';
 
 function Signup() {
-    const [loading, setLoading] = useState(true)
+  const [formData, setFormData] = useState({})
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
+
+  const handleChange = (e) => {
+    setFormData({...formData, [e.target.id]: e.target.value})
+    console.log(formData)
+  }
+  const handleSubmit = async (e) =>{
+    e.preventDefault()
+    try {
+      const res = await fetch('/api/auth/signup', {
+        method : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+      const data = await res.json()
+      if (data.success === false) {
+        return setErrorMessage(data.message)
+      }
+      setLoading(false)
+      if(res.ok) {
+        navigate('/signin')
+      }
+    } catch (error) {
+      setErrorMessage('Failed to sign up. Please try again.');
+      setLoading(false)
+    }
+  }
 
   return (
     <div className='min-h-screen mt-20'>
@@ -20,13 +49,23 @@ function Signup() {
         {/* right */}
 
         <div className='flex-1 bg-white p-5 rounded'>
-          <form className='flex flex-col gap-4'>
+          <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <div>
               <Label value='Your username' />
               <TextInput
                 type='text'
                 placeholder='KiLLuLa'
-                id='name'
+                id='username'
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <Label value='Your email' />
+              <TextInput
+                type='email'
+                placeholder='name@something.com'
+                id='email'
+                onChange={handleChange}
               />
             </div>
             <div>
@@ -35,6 +74,7 @@ function Signup() {
                 type='password'
                 placeholder='**********'
                 id='password'
+                onChange={handleChange}
               />
             </div>
             <Button
@@ -42,20 +82,15 @@ function Signup() {
               type='submit'
             >
                 <>
-                  <Spinner size='sm' />
-                  <span className='pl-3'>Loading...</span>
+                  {/*   <Spinner size='sm' />*/}
+                  <span className='pl-3'>Sign UP</span>
                 </>
             </Button>
           </form>
-          <div className='flex gap-2 text-sm mt-5'>
-            <span>Dont Have an account?</span>
-            <Link to='/sign-up' className='text-blue-500'>
-              Sign Up
-            </Link>
-          </div>
+           {errorMessage &&  
             <Alert className='mt-5' color='failure'>
               errorMessage
-            </Alert>
+            </Alert>}
         </div>
       </div>
     </div>
